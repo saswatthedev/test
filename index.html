@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visona AI - Advanced Facial Analysis</title>
+  <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    /* Option 1: DM Sans */
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+    
+
+
+    :root {
+      --bg-primary: #080810;
+      --bg-secondary: #0d0d1a;
+      --accent: #7c4dff;
+      --accent-secondary: #00e5ff;
+      --accent-tertiary: #ff0080;
+      --text: #f5f5fc;
+      --text-secondary: #a0a0c0;
+      --card-bg: rgba(18, 18, 30, 0.6);
+      --glass-effect: rgba(255, 255, 255, 0.03);
+      --neon-glow: 0 0 20px rgba(124, 77, 255, 0.5);
+      --section-padding: 6rem 0;
+      --container-padding: 0 2rem;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    p {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text);
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(124, 77, 255, 0.15), transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.1), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 128, 0.05), transparent 60%);
+      background-attachment: fixed;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--container-padding);
+      position: relative;
+    }
+
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: var(--section-padding) 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--text), var(--accent-secondary) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span {
+      display: block;
+      background: linear-gradient(90deg, var(--accent), var(--accent-tertiary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      max-width: 550px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .cta-button {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s ease;
+      z-index: -1;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 25px rgba(124, 77, 255, 0.4);
+    }
+
+    .cta-button:hover::before { left: 100%; }
+
+    .secondary-button {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent-secondary);
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .secondary-button:hover {
+      background: rgba(124, 77, 255, 0.1);
+      box-shadow: 0 0 15px rgba(124, 77, 255, 0.3);
+    }
+
+    .secondary-button svg { transition: transform 0.3s ease; }
+    .secondary-button:hover svg { transform: translateX(4px); }
+
+    .hero-visual {
+      position: relative;
+      width: 100%;
+      height: 550px;
+      border-radius: 34px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(13, 13, 26, 0.8), rgba(18, 18, 30, 0.6));
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary), var(--accent-tertiary), var(--accent));
+      z-index: -1;
+      border-radius: 26px;
+      opacity: 0.5;
+      animation: borderGlow 10s linear infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; filter: hue-rotate(0deg) blur(12px); }
+      50% { background-position: 100% 50%; filter: hue-rotate(180deg) blur(12px); }
+      100% { background-position: 0% 50%; filter: hue-rotate(360deg) blur(12px); }
+    }
+
+    #message-text {
+      color: var(--text);
+      font-size: 1.7rem;
+      font-weight: 500;
+      text-align: center;
+      padding: 1.5rem;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 2;
+      max-width: 80%;
+      line-height: 1.2;
+
+    }
+    
+
+    .visona-highlight {
+      display: inline;
+      background: linear-gradient(90deg, var(--accent), var(--accent-tertiary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .features {
+      padding: var(--section-padding);
+      position: relative;
+      background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+      margin-top: 50px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1.2rem;
+      letter-spacing: -1px;
+    }
+
+    .section-description {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-secondary), var(--accent), var(--accent-tertiary));
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      z-index: 0;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(124, 77, 255, 0.35);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(124, 77, 255, 0.15);
+    }
+
+    .feature-card:hover::before {
+      opacity: 0.85;
+      transform: scaleX(1);
+    }
+
+    .feature-icon {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      width: 60px;
+      height: 60px;
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(124, 77, 255, 0.3);
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.05) translateY(-2px);
+    }
+
+    .feature-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: white;
+      stroke-width: 1.5;
+    }
+
+    .feature-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--border-radius-md);
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      filter: blur(15px);
+      opacity: 0.5;
+      z-index: -1;
+    }
+
+    .feature-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: white;
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      -webkit-text-fill-color: initial;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview-images {
+      padding: var(--section-padding);
+      background-color: var(--bg-secondary);
+    }
+
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .preview-image-wrapper {
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: var(--card-bg);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .preview-image-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .pricing {
+      padding: var(--section-padding);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      max-width: 1000px;
+      margin: 4rem auto 0;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(124, 77, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #e68800;
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 2;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .pricing-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .pricing-card .advanced-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #7928ca, #ff0080, #ffb300, #00bfff, #7928ca);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-flow 8s linear infinite;
+    }
+
+    .pricing-description {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      min-height: 3em;
+    }
+
+    .pricing-features {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 2.5rem;
+      color: var(--text-secondary);
+      text-align: left;
+      flex-grow: 1;
+    }
+
+    .pricing-features li {
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .pricing-features li svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent-secondary);
+      stroke-width: 2;
+      flex-shrink: 0;
+    }
+
+    .pricing-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .pricing-period {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .pricing-card .cta-button,
+    .pricing-card .secondary-button {
+      width: 100%;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    .original-price {
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: line-through;
+      margin-bottom: 0.2rem;
+    }
+
+    .discounted-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    @keyframes gradient-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .updates {
+      padding: var(--section-padding);
+      background-color: var(--bg-primary);
+    }
+
+    #updates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .update-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-lg);
+      padding: 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .update-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15), 0 0 10px rgba(124, 77, 255, 0.1);
+    }
+
+    .update-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 1.2rem;
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .update-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .update-date {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.8rem;
+    }
+
+    .update-description {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .faq {
+      padding: var(--section-padding);
+      background-color: var(--bg-secondary);
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 4rem auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.3rem 1.5rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+
+    .faq-question:hover {
+      background-color: rgba(255,255,255,0.03);
+    }
+
+    .faq-question .arrow {
+      width: 12px;
+      height: 12px;
+      border-left: 2px solid var(--accent-secondary);
+      border-bottom: 2px solid var(--accent-secondary);
+      transform: rotate(-45deg);
+      transition: transform 0.3s ease;
+      margin-left: 1rem;
+      flex-shrink: 0;
+    }
+
+    .faq-item.active .faq-question .arrow {
+      transform: rotate(135deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease-out, padding 0.35s ease-out;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .faq-answer p {
+      padding: 0 1.5rem 1.3rem;
+      margin: 0;
+    }
+
+    .comments {
+      padding: var(--section-padding);
+      background-color: var(--bg-primary);
+    }
+
+    .comments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .comment-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius-md);
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .comment-profile {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .comment-content {
+      flex-grow: 1;
+    }
+
+    .comment-text {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-author {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .comments-cta {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .footer {
+      background-color: rgba(8, 8, 16, 0.8);
+      padding: 3rem 0 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      text-align: center;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .footer-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .copyright {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      order: 1;
+    }
+
+    .footer-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+      position: relative;
+      order: 2;
+    }
+
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      transition: width 0.3s ease;
+    }
+
+    .footer-link:hover { color: var(--text); }
+    .footer-link:hover::after { width: 100%; }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      order: 3;
+    }
+
+    .social-links p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .social-links p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    @media (max-width: 1200px) {
+      .container { max-width: 960px; }
+      .hero-title { font-size: 3.4rem; }
+      .section-title { font-size: 2.8rem; }
+      .hero-visual { height: 500px; }
+      .pricing-grid { max-width: 960px; }
+    }
+
+    @media (max-width: 992px) {
+      .container { max-width: 720px; }
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        text-align: center;
+      }
+      .hero-content { order: 1; margin-top: 2rem; }
+      .hero-visual { order: 2; height: 400px; margin-bottom: 0; }
+      .hero-description { margin-left: auto; margin-right: auto; }
+      .hero-cta { justify-content: center; }
+      .features-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+      .pricing-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 720px; }
+      #updates-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+      .preview-image-wrapper { max-width: 600px; }
+    }
+
+    @media (max-width: 768px) {
+      .container { max-width: 540px; --container-padding: 0 1.5rem;}
+      .hero { padding-top: 6rem; }
+      .hero-title { font-size: 2.8rem; }
+      .section-title { font-size: 2.4rem; }
+      .hero-visual { height: 350px; }
+      .preview-image-wrapper { max-width: 100%; aspect-ratio: 16 / 10;}
+      .pricing-grid { grid-template-columns: 1fr; max-width: 380px; }
+      #updates-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 576px) {
+      :root { --section-padding: 4rem 0; }
+      .container { --container-padding: 0 1rem; }
+      .hero-title { font-size: 2.2rem; }
+      .hero-description { font-size: 1rem; }
+      .section-title { font-size: 2rem; }
+      .hero-cta { flex-direction: column; align-items: stretch; gap: 1rem; }
+      .cta-button, .secondary-button { width: 100%; text-align: center; justify-content: center;}
+      .feature-card { padding: 1.5rem; }
+      .feature-title { font-size: 1.2rem; }
+      .feature-description { font-size: 0.95rem; }
+      .pricing-card { padding: 2rem; }
+      .pricing-title { font-size: 1.6rem; }
+      .pricing-price { font-size: 2rem; }
+      .footer-info { gap: 0.5rem 1rem; }
+      .copyright, .footer-link { font-size: 0.85rem; }
+      .update-card { padding: 1.5rem; }
+      .update-title { font-size: 1.15rem; }
+      .faq-question { font-size: 1rem; padding: 1.2rem 1.3rem; }
+      .faq-answer p { padding: 0 1.3rem 1.2rem; }
+    }
+
+    /* Our Goal Section Styles */
+    .our-goal-section {
+      padding: var(--section-padding);
+      background-color: var(--bg-secondary); /* Or var(--bg-primary) depending on desired contrast */
+      position: relative;
+    }
+    
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* This creates two equal-width columns */
+      gap: 2rem;
+      position: relative;
+      z-index: 2;
+      margin-top: 4rem; /* Space below section header */
+    }
+    
+    .goal-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: var(--border-radius-lg);
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .goal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-tertiary));
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      z-index: 0;
+    }
+    
+    .goal-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 229, 255, 0.35);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 229, 255, 0.15);
+    }
+    
+    .goal-card:hover::before {
+      opacity: 0.85;
+      transform: scaleX(1);
+    }
+    
+    .goal-icon {
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+      width: 60px;
+      height: 60px;
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(0, 229, 255, 0.3);
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    
+    .goal-card:hover .goal-icon {
+      transform: scale(1.05) translateY(-2px);
+    }
+    
+    .goal-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: white;
+      stroke-width: 1.5;
+    }
+    
+    .goal-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: var(--border-radius-md);
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+      filter: blur(15px);
+      opacity: 0.4;
+      z-index: -1;
+    }
+    
+    .goal-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .goal-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 1rem;
+      position: relative;
+      z-index: 1;
+      flex-grow: 1;
+    }
+    
+    /* Responsive adjustments for the goal grid */
+    @media (max-width: 768px) {
+      .goal-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+      }
+      .goal-card {
+        padding: 1.8rem;
+      }
+    }
+    
+    /* You might have an even smaller breakpoint, adjust if necessary */
+    @media (max-width: 576px) {
+      .goal-card {
+        padding: 1.5rem; /* Further reduce padding if needed */
+      }
+      .goal-title {
+        font-size: 1.2rem;
+      }
+      .goal-description {
+        font-size: 0.95rem;
+      }
+
+      #message-text {
+        line-height: 1.2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <h1 class="hero-title">Next Generation <span>Facial Analysis</span> Technology</h1>
+            <p class="hero-description">
+              Meet Visona Ai, an intelligent ai for your facial analysis, it can provide features of your face. So, you can know how good you look. It will also provide suggestions with products for glowups. Now, it's your time to show your best face to the world.
+            </p>
+            <div class="hero-cta">
+              <a href="#pricing" class="cta-button">Use Visona</a>
+              <a href="#features" class="secondary-button">
+                Learn More
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div id="message-text"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Features</h2>
+          <p class="section-description">Discover the core capabilities that make Visona AI<br>the leading facial analysis tool.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+            </div>
+            <h3 class="feature-title">Accuracy</h3>
+            <p class="feature-description">Leverages state-of-the-art algorithms for precise facial feature detection and analysis, ensuring reliable results.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+            </div>
+            <h3 class="feature-title">Best Product Suggestions</h3>
+            <p class="feature-description">Receive personalized product recommendations based on your unique facial analysis to enhance your features.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <h3 class="feature-title">Privacy Focused</h3>
+            <p class="feature-description">Your data is processed securely and is never stored. Your privacy is our top priority.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="preview" class="preview-images">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Preview Images</h2>
+          <p class="section-description">See examples of Visona AI analysis in action.</p>
+        </div>
+        <div class="preview-container">
+          <div class="preview-image-wrapper"
+               style="background-image: url('https://via.placeholder.com/800x450/0D0D1A/A0A0C0?text=Preview+Image+1');"
+               oncontextmenu="return false;">
+          </div>
+          <div class="preview-image-wrapper"
+               style="background-image: url('https://via.placeholder.com/800x450/111122/A0A0C0?text=Preview+Image+2');"
+               oncontextmenu="return false;">
+          </div>
+          <div class="preview-image-wrapper"
+               style="background-image: url('https://via.placeholder.com/800x450/0A0A18/A0A0C0?text=Preview+Image+3');"
+               oncontextmenu="return false;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Pricing Plans</h2>
+          <p class="section-description">Choose the plan that best suits your needs.<br>Start for free or unlock advanced features.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <h3 class="pricing-title">Visona Standard</h3>
+            <p class="pricing-description">Try Visona with a free basic analysis.</p>
+            <ul class="pricing-features">
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>1 Free Basic Analysis</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Preview Access</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>No Product Suggestions</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Standard Accuracy</li>
+            </ul>
+            <div class="pricing-price">Free</div>
+            <p class="pricing-period">No cost, just to try</p>
+            <a href="#" class="secondary-button">Get Started</a>
+          </div>
+          <div class="pricing-card" style="border-color: var(--accent);">
+            <div class="popular-badge">Most Popular</div>
+            <h3 class="advanced-title">Visona Advanced</h3>
+            <p class="pricing-description">Enhanced accuracy with full features at an affordable price.</p>
+            <ul class="pricing-features">
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>20 Credits (20 Advanced Analyses)</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Superior Accuracy</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Product Suggestions</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Personal Support</li>
+            </ul>
+            <div class="original-price">$9.99</div>
+            <div class="discounted-price">$1.99 Only!</div>
+            <p class="pricing-period">One-time payment</p>
+            <a href="#" class="cta-button">Choose Advanced</a>
+          </div>
+          <div class="pricing-card">
+            <h3 class="pricing-title">Custom</h3>
+            <p class="pricing-description">Integrate Visona directly into your business systems.</p>
+            <ul class="pricing-features">
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Integrate With Your Systems</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Very High Volume Uses</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Unlimited Access In Some Cases</li>
+              <li><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Volume-Based Discounts</li>
+            </ul>
+            <div class="pricing-price">Contact Us</div>
+            <p class="pricing-period">Let's talk about your needs</p>
+            <a href="/cdn-cgi/l/email-protection#3241535e574172445b415d5c531c535b0d414750585751460f714741465d5f12625e535c127b5c43475b404b" class="secondary-button">Talk to Sales</a>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="comments-cta">
+        <a href="/payments" class="secondary-button">Learn More About Payment</a>
+        </div>
+    </section>
+
+    <section id="updates" class="updates">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Recent Updates & Announcements</h2>
+          <p class="section-description">Stay informed about the latest enhancements, features,<br>and news from Visona AI.</p>
+        </div>
+        <div id="updates-grid">
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-description">Find answers to common questions about Visona AI,<br>its features, and how it works.</p>
+        </div>
+        <div class="faq-container">
+        </div>
+      </div>
+    </section>
+
+    <section id="comments" class="comments">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">What Our Users Say</h2>
+          <p class="section-description">Hear from those who have experienced Visona AI.</p>
+        </div>
+        <div class="comments-grid">
+          <div class="comment-card">
+            <div class="comment-profile">
+              <span class="profile-initial">J</span>
+            </div>
+            <div class="comment-content">
+              <p class="comment-text">"Visona AI helped me understand my facial features better. The product suggestions were spot on!"</p>
+              <p class="comment-author">John S.</p>
+            </div>
+          </div>
+          <div class="comment-card">
+            <div class="comment-profile">
+              <span class="profile-initial">A</span>
+            </div>
+            <div class="comment-content">
+              <p class="comment-text">"I love the accuracy of the analysis. It's like having a personal beauty advisor."</p>
+              <p class="comment-author">Alice M.</p>
+            </div>
+          </div>
+          <div class="comment-card">
+            <div class="comment-profile">
+              <span class="profile-initial">M</span>
+            </div>
+            <div class="comment-content">
+              <p class="comment-text">"The Advanced plan is worth every penny. The detailed insights are incredible."</p>
+              <p class="comment-author">Michael T.</p>
+            </div>
+          </div>
+        </div>
+        <div class="comments-cta">
+          <a href="/comments" class="secondary-button">View More Comments</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="our-goal" class="our-goal-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Our Goal</h2>
+          <p class="section-description">We are committed to providing a facial analysis tool that excels in the following areas, ensuring a valuable and trustworthy experience for our users.</p>
+        </div>
+        <div class="goal-grid">
+          <div class="goal-card">
+            <div class="goal-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="12" y1="2" x2="12" y2="6"></line>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="22" y1="12" x2="18" y2="12"></line>
+                <line x1="6" y1="12" x2="2" y2="12"></line>
+              </svg>
+            </div>
+            <h3 class="goal-title">Unparalleled Accuracy</h3>
+            <p class="goal-description">Delivering highly precise facial analysis to provide you with the most reliable insights.</p>
+          </div>
+    
+          <div class="goal-card">
+            <div class="goal-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <h3 class="goal-title">Affordable for Everyone</h3>
+            <p class="goal-description">Making advanced technology accessible with cost-effective solutions for all users.</p>
+          </div>
+    
+          <div class="goal-card">
+            <div class="goal-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="12 8 12 12 14 14"></polyline>
+              </svg>
+            </div>
+            <h3 class="goal-title">Safe and Trusted Platform</h3>
+            <p class="goal-description">Ensuring your data is handled with the utmost security and privacy, building a trustworthy environment.</p>
+          </div>
+    
+          <div class="goal-card">
+            <div class="goal-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.94 14A8.003 8.003 0 0 0 12 4a8 8 0 0 0-9.54 11.44"></path>
+                <path d="M12 2v1"></path>
+                <path d="M12 21v1"></path>
+                <path d="m4.93 4.93.71.71"></path>
+                <path d="m18.36 18.36.71.71"></path>
+                <path d="M2 12h1"></path>
+                <path d="M21 12h1"></path>
+                <path d="m6.24 17.4-1.78-1.78"></path>
+                <path d="m19.54 6.34-1.78-1.78"></path>
+                <path d="M12 12l-4 4"></path>
+                <path d="M12 18a6 6 0 0 0 6-6h-3a3 3 0 0 1-3 3v0Z"></path>
+              </svg>
+            </div>
+            <h3 class="goal-title">Energy Efficient AI</h3>
+            <p class="goal-description">Utilizing less computing power compared to large models, contributing to energy savings and a greener footprint.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <span class="copyright">© 2025 Visona AI. All rights reserved.</span>
+          <a href="#" class="footer-link">Terms of Service</a>
+        </div>
+        <div class="social-links">
+          <p>Want to chat? Talk with the developer on Discord: <strong>@swt.dv</strong></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const messages = [
+        'Get Glowup with Visona',
+        'Get confidence with Visona',
+        'Enhance Your Beauty<br>with Visona',
+        'Discover your best<br>self with Visona',
+        'Unlock your beauty<br>with Visona',
+        'Boost your confidence<br>with Visona',
+        'Feel beautiful with Visona'
+      ];
+      let currentIndex = 0;
+      const messageElement = document.getElementById('message-text');
+      let messageTimeout;
+
+      function showMessage(index) {
+        if (!messageElement) return;
+        clearTimeout(messageTimeout);
+        messageElement.style.opacity = '0';
+        messageTimeout = setTimeout(() => {
+          messageElement.innerHTML = messages[index];
+          messageElement.style.opacity = '1';
+          currentIndex = index;
+          messageTimeout = setTimeout(() => {
+            const nextIndex = (index + 1) % messages.length;
+            showMessage(nextIndex);
+          }, 4000);
+        }, 500);
+      }
+
+      if (messageElement) {
+        showMessage(0);
+        document.addEventListener('visibilitychange', function() {
+          if (document.visibilityState === 'visible') {
+            showMessage(currentIndex);
+          }
+        });
+      }
+
+      const animatedElements = document.querySelectorAll('.feature-card, .pricing-card, .preview-image-wrapper, .update-card, .faq-item, .comment-card');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      animatedElements.forEach((el) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        observer.observe(el);
+      });
+
+      const previewContainers = document.querySelectorAll('.preview-image-wrapper');
+      previewContainers.forEach(container => {
+        container.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+      });
+
+      const recentUpdatesData = [
+        {
+          title: "Visona AI Version 2.0 Is Here!",
+          date: "May 07, 2025",
+          description: "Experience our newly launched version with improved analysis algorithms, a refreshed user interface, and faster processing times. Discover the enhancements today!",
+          imageUrl: "https://source.unsplash.com/random/400x250/?technology,future"
+        },
+        {
+          title: "New Feature: Trend Analysis",
+          date: "April 25, 2025",
+          description: "We've added a new feature that allows you to see how facial feature trends are evolving. Available now for Advanced plan users.",
+          imageUrl: "https://source.unsplash.com/random/400x250/?trends,analytics"
+        },
+        {
+          title: "Server Maintenance Scheduled",
+          date: "April 10, 2025",
+          description: "We will be performing scheduled server maintenance on April 15th, from 2 AM to 4 AM UTC to improve system performance and reliability.",
+          imageUrl: "https://source.unsplash.com/random/400x250/?server,maintenance"
+        }
+      ];
+
+      const updatesGrid = document.getElementById('updates-grid');
+      if (updatesGrid) {
+        recentUpdatesData.forEach(update => {
+          const card = document.createElement('div');
+          card.classList.add('update-card');
+          card.innerHTML = `
+            <img src="${update.imageUrl}" alt="${update.title}" class="update-image" loading="lazy">
+            <h3 class="update-title">${update.title}</h3>
+            <p class="update-date">${update.date}</p>
+            <p class="update-description">${update.description}</p>
+          `;
+          updatesGrid.appendChild(card);
+        });
+      }
+
+      const faqData = [
+      {
+        question: "What is Visona AI?",
+        answer: "Visona AI is an advanced facial analysis tool that uses artificial intelligence to provide insights into your facial features, suggest product recommendations, and help you understand your unique look."
+      },
+      {
+        question: "How does the facial analysis work?",
+        answer: "Our AI processes an image you provide (which is not stored) to identify key facial landmarks and characteristics. It then compares these against a vast dataset to provide analysis and suggestions."
+      },
+      {
+        question: "Is my data and privacy protected?",
+        answer: "Yes, privacy is a top priority. We process images securely and do not store your personal images after analysis. All data handling complies with strict privacy standards."
+      },
+      {
+        question: "Which plan is right for me?",
+        answer: "While the Standard plan offers a free preview, the Visona Advanced plan provides the best value at just $1.99. You'll get 20 advanced analyses with superior accuracy, product recommendations, and personal support - making it our most popular choice for good reason."
+      },
+      {
+        question: "How can I get support?",
+        answer: "For general inquiries, you can check our FAQ. Users on paid plans have access to personal support. For Custom plan inquiries or detailed support, please contact us via the methods provided."
+      },
+      {
+        question: "How accurate is the analysis?",
+        answer: "The accuracy varies by plan. Standard offers basic accuracy suitable for initial exploration, while Advanced provides significantly higher accuracy with more detailed insights and product matching."
+      },
+      {
+        question: "Can I use Visona for my business?",
+        answer: "Absolutely! Our Custom plan is designed for businesses that want to integrate Visona into their systems. We offer very high volume usage options with possible unlimited access and volume-based discounts."
+      },
+      {
+        question: "Why choose Visona Advanced over Standard?",
+        answer: "Visona Advanced takes everything to the next level with significantly better accuracy, personalized product suggestions, and dedicated support, all for just $1.99 instead of the usual $9.99. It's our best value option."
+      },
+      {
+        question: "What kind of product suggestions will I receive?",
+        answer: "Based on your facial analysis, we'll recommend products that complement your unique features, including makeup, skincare, accessories, and style recommendations tailored to your specific facial characteristics."
+      },
+      {
+        question: "How do I redeem my credits?",
+        answer: "Once you purchase the Advanced plan, your 20 credits are automatically added to your account. Simply log in and use the analysis feature whenever you need it - each analysis uses one credit."
+      }
+    ];
+
+      const faqContainer = document.querySelector('.faq-container');
+      if (faqContainer) {
+        faqData.forEach(itemData => {
+          const faqItem = document.createElement('div');
+          faqItem.classList.add('faq-item');
+
+          const questionButton = document.createElement('button');
+          questionButton.classList.add('faq-question');
+          questionButton.setAttribute('type', 'button');
+          questionButton.innerHTML = `
+            ${itemData.question}
+            <span class="arrow"></span>
+          `;
+
+          const answerDiv = document.createElement('div');
+          answerDiv.classList.add('faq-answer');
+          const answerParagraph = document.createElement('p');
+          answerParagraph.textContent = itemData.answer;
+          answerDiv.appendChild(answerParagraph);
+
+          faqItem.appendChild(questionButton);
+          faqItem.appendChild(answerDiv);
+          faqContainer.appendChild(faqItem);
+
+          questionButton.addEventListener('click', () => {
+            const currentlyActive = faqContainer.querySelector('.faq-item.active');
+            if (currentlyActive && currentlyActive !== faqItem) {
+              currentlyActive.classList.remove('active');
+              currentlyActive.querySelector('.faq-answer').style.maxHeight = '0px';
+            }
+
+            faqItem.classList.toggle('active');
+            if (faqItem.classList.contains('active')) {
+              answerDiv.style.maxHeight = answerDiv.scrollHeight + "px";
+            } else {
+              answerDiv.style.maxHeight = "0px";
+            }
+          });
+        });
+      }
+    });
+  </script>
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93be03c51e481377',t:'MTc0NjU5MjU2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
